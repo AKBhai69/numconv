@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number System Converter</title>
+  <style>
+    /* ==== Global Styling ==== */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      animation: bgAnimation 15s infinite alternate;
+    }
+
+    @keyframes bgAnimation {
+      0% { background: linear-gradient(135deg, #89f7fe, #66a6ff); }
+      50% { background: linear-gradient(135deg, #fbc2eb, #a6c1ee); }
+      100% { background: linear-gradient(135deg, #fad0c4, #ffd1ff); }
+    }
+
+    /* ==== Converter Box ==== */
+    .converter {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 360px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeIn 1s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .converter::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(76,175,80,0.15), transparent 70%);
+      transform: rotate(25deg);
+      animation: shine 6s linear infinite;
+      pointer-events: none; /* ✅ FIX: input fields now work */
+    }
+
+    @keyframes shine {
+      0% { transform: rotate(25deg) translateX(-50px); }
+      100% { transform: rotate(25deg) translateX(200px); }
+    }
+
+    .converter:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    /* ==== Inputs & Buttons ==== */
+    select, input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #4CAF50;
+      outline: none;
+      box-shadow: 0 0 12px rgba(76,175,80,0.5);
+      transform: scale(1.02);
+    }
+
+    button {
+      background: linear-gradient(45deg, #4CAF50, #2e7d32);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      border: none;
+      box-shadow: 0 4px 10px rgba(76,175,80,0.4);
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    button::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.3);
+      transform: skewX(-30deg);
+      transition: left 0.5s;
+    }
+    button:hover::after {
+      left: 150%;
+    }
+    button:hover {
+      background: linear-gradient(45deg, #66bb6a, #43a047);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(76,175,80,0.6);
+    }
+
+    /* ==== Result Box ==== */
+    .result {
+      margin-top: 18px;
+      padding: 14px;
+      background: #e8f5e9;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #1b5e20;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==== Credits Box ==== */
+    .credits {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.95);
+      padding: 15px 20px;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+      transition: all 0.4s ease;
+      animation: slideIn 1s ease;
+    }
+    .credits:hover {
+      transform: translateY(-6px) scale(1.05);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.3);
+    }
+    .credits h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #2c3e50;
+      border-bottom: 2px solid #4CAF50;
+      display: inline-block;
+      padding-bottom: 4px;
+    }
+    .credits ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    .credits li {
+      margin: 2px 0;
+      transition: transform 0.2s;
+    }
+    .credits li:hover {
+      transform: translateX(5px);
+      color: #2e7d32;
+      font-weight: 500;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="converter">
+    <h2>Number System Converter</h2>
+    <select id="fromSystem">
+      <option value="2">Binary</option>
+      <option value="10" selected>Decimal</option>
+      <option value="8">Octal</option>
+      <option value="16">Hexadecimal</option>
+    </select>
+    <input type="text" id="inputNumber" placeholder="Enter number">
+    <select id="toSystem">
+      <option value="2">Binary</option>
+      <option value="10">Decimal</option>
+      <option value="8">Octal</option>
+      <option value="16" selected>Hexadecimal</option>
+    </select>
+    <button onclick="convert()">Convert</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- Credits Box -->
+  <div class="credits">
+    <h3>Made By:</h3>
+    <ul>
+      <li>Shreyansh Kumar (RA2411004010013)</li>
+      <li>Asmit Singh (RA2411004010023)</li>
+      <li>Harsh Khurana (RA2411004010043)</li>
+      <li>A. Avinash Kumar (RA2411004010052)</li>
+      <li>Shivam Mishra (RA2411004010055)</li>
+    </ul>
+  </div>
+
+  <script>
+    function convert() {
+      const fromBase = parseInt(document.getElementById("fromSystem").value);
+      const toBase = parseInt(document.getElementById("toSystem").value);
+      const input = document.getElementById("inputNumber").value.trim();
+      const resultBox = document.getElementById("result");
+
+      try {
+        const decimal = parseInt(input, fromBase);
+        if (isNaN(decimal)) throw "Invalid number!";
+        
+        let converted;
+        if (toBase === 2) converted = decimal.toString(2);
+        else if (toBase === 8) converted = decimal.toString(8);
+        else if (toBase === 10) converted = decimal.toString(10);
+        else if (toBase === 16) converted = decimal.toString(16).toUpperCase();
+
+        // reset animation each time
+        resultBox.style.animation = "none";
+        void resultBox.offsetWidth; // reflow trick
+        resultBox.innerText = `Result: ${converted}`;
+        resultBox.style.animation = "fadeUp 0.6s forwards";
+      } catch (e) {
+        resultBox.style.animation = "none";
+        void resultBox.offsetWidth;
+        resultBox.innerText = "Error: Invalid input!";
+        resultBox.style.animation = "fadeUp 0.6s forwards";
+      }
+    }
+  </script>
+</body>
+</html>
